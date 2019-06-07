@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iurc.dao.ProjectDao">
+	
+	<select id="findAll" parameterType="com.iurc.entity.Project" 
+	resultType="com.iurc.entity.Project">
+		select * from iurc_project where 1=1  
+		<if test="id!=null and id!= ''">
+			and id = #{id}
+		</if>
+		<if test="unitId!=null and unitId!=''">
+			and unitId = #{unitId}
+		</if>
+		<if test="projectName!=null and projectName!=''">
+			and projectName like CONCAT('%',CONCAT(#{projectName},'%'))
+		</if>
+	</select>
+	<select id="findAllUnit"  resultType="com.iurc.entity.Project">
+		select * from iurc_project 
+	</select>
+	<select id="find" parameterType="com.iurc.entity.Project" 
+	resultType="com.iurc.entity.Project">
+		select * from iurc_project where 1=1  
+		<if test="projectName!=null and projectName!=''">
+			and projectName = #{projectName}
+		</if>
+		<if test="unitId!=null and unitId!=''">
+			and unitId = #{unitId}
+		</if>
+		<if test="id!=null and id!=''">
+			and id = #{id}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="com.iurc.entity.Project"  >
+		insert into iurc_project
+		(id
+		<if test="unitId!=null">,unitId</if>
+		<if test="projectName!=null">,projectName</if>
+		<if test="projectContent!=null">,projectContent</if>
+		<if test="projectFoundingTime!=null">,projectFoundingTime</if>
+		<if test="state!=null">,state</if>
+		)
+		values
+		(0
+		<if test="unitId!=null">,#{unitId}</if>
+		<if test="projectName!=null">,#{projectName}</if>
+		<if test="projectContent!=null">,#{projectContent}</if>
+		<if test="projectFoundingTime!=null">,#{projectFoundingTime}</if>
+		,0
+		)
+	</insert>
+	
+	<update id="edit" parameterType="com.iurc.entity.Project" >
+		update iurc_project set
+		<if test="unitId!=null">
+			unitId = #{unitId},
+		</if>
+		<if test="projectName!=null">
+			projectName = #{projectName},
+		</if>
+		<if test="projectContent!=null">
+			projectContent = #{projectContent},
+		</if>
+		<if test="projectFoundingTime!=null">
+			projectFoundingTime = #{projectFoundingTime},
+		</if>
+		<if test="state!=null">
+			state = #{state}
+		</if>
+		where id = ${id}
+	</update>
+	
+	<update id="remove" parameterType="com.iurc.entity.Project"  >
+		update iurc_project set state = 1 where id = ${id}
+	</update>
+	
+	
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM iurc_project WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteMore" parameterType="List" >
+		delete from iurc_project where id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")"> 
+    		#{item,jdbcType=BIGINT} 
+   		</foreach> 
+	</delete>
+	
+	<select id="queryById" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.Project">
+		select * from iurc_project where id=#{id}  
+	</select>
+	
+	
+	<select id="queryByPage" parameterType="Map" 
+	resultType="com.iurc.entity.Project">
+		select * from iurc_project  limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="queryAll" resultType="com.iurc.entity.Project">
+		select * from iurc_project  
+	</select>
+	
+	<select id="getTotals" resultType="java.lang.Integer">
+		select count(*) from iurc_project  
+	</select>
+	
+	
+	<select id="queryByProjectId" parameterType="java.lang.Integer" 
+	resultMap="projectResultMap">
+		select * from iurc_project u,iurc_unit n where u.unitId=n.id and u.id=#{id}  
+	</select>
+	
+	<!-- 映射Project对象的resultMap -->
+	<resultMap type="com.iurc.entity.Project" id="projectResultMap">
+		<id property="id" column="id"/>
+		<result property="projectName" column="projectName"/>
+		<result property="unitId" column="unitId"/>
+		<result property="projectContent" column="projectContent"/>
+		<result property="projectFoundingTime" column="projectFoundingTime" javaType="java.sql.Timestamp"/>
+		<result property="state" column="state"/>
+		<!-- 一对多关联映射：collection fetchType="layz" 表示懒加载 -->
+		<collection property="cooperations" javaType="ArrayList" 
+				column="id" ofType="com.iurc.entity.Cooperation"
+				select="com.iurc.dao.CooperationDao.queryByProjectId" >
+					<id property="id" column="id"/>
+					<result property="cUnitId" column="cUnitId"/>
+					<result property="cooperatedTime" column="cooperatedTime" javaType="java.sql.Timestamp" />
+					<result property="contract" column="contract"/>
+					<result property="state" column="state"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 映射Project对象的resultMap -->
+	<resultMap type="com.iurc.entity.Project" id="projectResultMap2">
+		<id property="id" column="id"/>
+		<result property="projectName" column="projectName"/>
+		<result property="unitId" column="unitId"/>
+		<result property="projectContent" column="projectContent"/>
+		<result property="projectFoundingTime" column="projectFoundingTime" javaType="java.sql.Timestamp"/>
+		<result property="state" column="state"/>
+		<!-- 多对一关联映射：association   -->
+		<association property="unit" javaType="com.iurc.entity.Unit">
+			<id property="id" column="id"/>
+			<result property="unitName" column="unitName"/>
+			<result property="uid" column="uid"/>
+			<result property="unitType" column="unitType"/>
+			<result property="introduction" column="introduction"/>
+			<result property="industryField" column="industryField"/>
+			<result property="advantage" column="advantage"/>
+			<result property="address" column="address"/>
+			<result property="phone" column="phone"/>
+			<result property="state" column="state"/>
+		</association>
+	</resultMap>
+	
+	
+	<select id="searchByCondition" parameterType="map" 
+	resultType="com.iurc.entity.Project">
+		select * from iurc_project where 1=1  
+		<if test="condition1!=null and condition1!='' and condition1=='id'">
+			and id like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='unitId'">
+			and unitId like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='projectName'">
+			and projectName like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		order by id limit #{start},#{pageSize} 
+	</select>
+	
+	
+</mapper>

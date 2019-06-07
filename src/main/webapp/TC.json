@@ -1,0 +1,41 @@
+[{    
+    "id":1,    
+    "text":"主题",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"communityCenter.jsp"
+        }         
+},{    
+    "id":2,    
+    "text":"发表",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"post.jsp"
+        }         
+},{    
+    "id":3,    
+    "text":"回复",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"reply.jsp"
+        }         
+},{    
+    "id":4,    
+    "text":"收藏",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"themeCollection.jsp"
+        }         
+},{    
+    "id":5,    
+    "text":"已发表",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"themeRelease.jsp"
+        }         
+}]

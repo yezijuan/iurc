@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iurc.dao.UserDao">
+	
+	<select id="findAll" parameterType="com.iurc.entity.User" 
+	resultType="com.iurc.entity.User">
+		select * from iurc_user where 1=1  
+		<if test="id!=null and id!= ''">
+			and id = #{id}
+		</if>
+		<if test="username!=null and username!=''">
+			and username = #{username}
+		</if>
+		<if test="uname!=null and uname!=''">
+			and uname like CONCAT('%',CONCAT(#{uname},'%'))
+		</if>
+	</select>
+	<select id="find" parameterType="com.iurc.entity.User" 
+	resultType="com.iurc.entity.User">
+		select * from iurc_user where 1=1  
+		<if test="username!=null and username!=''">
+			and username = #{username}
+		</if>
+		<if test="password!=null and password!=''">
+			and password = #{password}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="com.iurc.entity.User"  >
+		insert into iurc_user
+		(id
+		<if test="uname!=null">,uname</if>
+		<if test="username!=null">,username</if>
+		<if test="password!=null">,password</if>
+		<if test="userType!=null">,userType</if>
+		<if test="phone!=null">,phone</if>
+		<if test="address!=null">,address</if>
+		<if test="sex!=null">,sex</if>
+		<if test="age!=null">,age</if>
+		<if test="birthday!=null">,birthday</if>
+		<if test="img!=null">,img</if>
+		<if test="unitId!=null">,unitId</if>
+		<if test="qqEmail!=null">,qqEmail</if>
+		<if test="weChat!=null">,weChat</if>
+		<if test="state!=null">,state</if>
+		,createTime
+		)
+		values
+		(0
+		<if test="uname!=null">,#{uname}</if>
+		<if test="username!=null">,#{username}</if>
+		<if test="password!=null">,#{password}</if>
+		<if test="userType!=null">,#{userType}</if>
+		<if test="phone!=null">,#{phone}</if>
+		<if test="address!=null">,#{address}</if>
+		<if test="sex!=null">,#{sex}</if>
+		<if test="age!=null">,#{age}</if>
+		<if test="birthday!=null">,#{birthday}</if>
+		<if test="img!=null">,#{img}</if>
+		<if test="unitId!=null">,#{unitId}</if>
+		<if test="qqEmail!=null">,#{qqEmail}</if>
+		<if test="weChat!=null">,#{weChat}</if>
+		,0
+		,CURRENT_TIMESTAMP 
+		)
+	</insert>
+	
+	<update id="edit" parameterType="com.iurc.entity.User" >
+		update iurc_user set
+		<if test="uname!=null">
+			uname = #{uname},
+		</if>
+		<if test="username!=null">
+			username = #{username},
+		</if>
+		<if test="password!=null">
+			password = #{password},
+		</if>
+		<if test="userType!=null">
+			userType = #{userType},
+		</if>
+		<if test="phone!=null">
+			phone = #{phone},
+		</if>
+		<if test="address!=null">
+			address = #{address},
+		</if>
+		<if test="sex!=null">
+			sex = #{sex},
+		</if>
+		<if test="age!=null">
+			age = #{age},
+		</if>
+		<if test="birthday!=null">
+			birthday = #{birthday},
+		</if>
+		<if test="img!=null">
+			img = #{img},
+		</if>
+		<if test="unitId!=null">
+			unitId = #{unitId},
+		</if>
+		<if test="qqEmail!=null">
+			qqEmail = #{qqEmail},
+		</if>
+		<if test="weChat!=null">
+			weChat = #{weChat},
+		</if>
+		<if test="state!=null">
+			state = #{state}
+		</if>
+		where id = ${id}
+	</update>
+	
+	<update id="remove" parameterType="com.iurc.entity.User"  >
+		update iurc_user set state = 1 where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM iurc_user WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteMore" parameterType="List" >
+		delete from iurc_user where id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")"> 
+    		#{item,jdbcType=BIGINT} 
+   		</foreach> 
+	</delete>
+	
+	<select id="queryByUserId" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.User">
+		select * from iurc_user where id=#{id}  
+	</select>
+	
+	<select id="queryById" parameterType="java.lang.Integer" 
+	resultMap="userresultMap">
+		select * from iurc_user u,iurc_unit n where u.unitId=n.id and u.id=#{id}  
+	</select>
+	
+	<select id="queryByUnitId" parameterType="java.lang.Integer" 
+	resultMap="userresultMap">
+		select * from iurc_user where unitId=#{id}  
+	</select>
+	<!-- 映射User对象的resultMap -->
+	<resultMap type="com.iurc.entity.User" id="userresultMap">
+		<id property="id" column="id"/>
+		<result property="uname" column="uname"/>
+		<result property="username" column="username"/>
+		<result property="password" column="password"/>
+		<result property="userType" column="userType"/>
+		<result property="phone" column="phone"/>
+		<result property="address" column="address"/>
+		<result property="unitId" column="unitId"/>
+		<result property="sex" column="sex"/>
+		<result property="age" column="age"/>
+		<result property="birthday" column="birthday" javaType="java.util.Date"/>
+		<result property="img" column="img"/>
+		<result property="createTime" column="createTime" javaType="java.sql.Timestamp"/>
+		<result property="qqEmail" column="qqEmail"/>
+		<result property="weChat" column="weChat"/>
+		<result property="state" column="state"/>
+		<!-- 多对一关联映射：association   -->
+		<association property="unit" javaType="com.iurc.entity.Unit">
+			<id property="id" column="id"/>
+			<result property="unitType" column="unitType"/>
+			<result property="unitName" column="unitName"/>
+			<result property="introduction" column="introduction"/>
+			<result property="address" column="address"/>
+			<result property="phone" column="phone"/>
+			<result property="industryField" column="industryField"/>
+			<result property="advantage" column="advantage"/>
+			<result property="state" column="state"/>
+		</association>
+	</resultMap>
+	
+	<select id="queryByPage" parameterType="Map" 
+	resultType="com.iurc.entity.User">
+		select * from iurc_user limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="queryAll" resultType="com.iurc.entity.User">
+		select * from iurc_user  
+	</select>
+	
+	<select id="getTotals" resultType="java.lang.Integer">
+		select count(*) from iurc_user  
+	</select>
+	
+	<!-- 禁用该用户,把禁用审核记录到审核表 -->
+	<update id="disablesById" parameterType="java.lang.Integer"  >
+		update iurc_user set state = 1 where id = #{id}
+	</update>
+	
+	<select id="searchByCondition" parameterType="map" 
+	resultType="com.iurc.entity.User">
+		select * from iurc_user where 1=1  
+		<if test="condition1!=null and condition1!='' and condition1=='id'">
+			and id like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='uname'">
+			and uname like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='username'">
+			and username like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='phone'">
+			and phone like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='qqEmail'">
+			and qqEmail like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='weChat'">
+			and weChat like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		order by id limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="findById" parameterType="java.lang.Integer" resultMap="userresultMap">
+		select * from iurc_user  where id = #{id}
+	</select>
+	
+</mapper>

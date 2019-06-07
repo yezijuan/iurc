@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iurc.dao.CollectionDao">
+	
+	<select id="findAll" parameterType="com.iurc.entity.Collection" 
+	resultType="com.iurc.entity.Collection">
+		select * from iurc_collection where 1=1  
+		<if test="id!=null and id!= ''">
+			and id = #{id}
+		</if>
+		<if test="type!=null and type!=''">
+			and type = #{type}
+		</if>
+		<if test="uid!=null and uid!=''">
+			and uid = #{uid}
+		</if>
+	</select>
+	<select id="findAllNews"  resultType="com.iurc.entity.Collection">
+		select * from iurc_collection 
+	</select>
+	<select id="find" parameterType="com.iurc.entity.Collection" 
+	resultType="com.iurc.entity.Collection">
+		select * from iurc_collection where 1=1  
+		<if test="uid!=null and uid!=''">
+			and uid = #{uid}
+		</if>
+		<if test="type!=null and type!=''">
+			and type = #{type}
+		</if>
+		<if test="typeId!=null and typeId!=''">
+			and typeId = #{typeId}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="com.iurc.entity.Collection"  >
+		insert into iurc_collection
+		(id
+		<if test="uid!=null">,uid</if>
+		<if test="type!=null">,type</if>
+		<if test="typeId!=null">,typeId</if>
+		,createTime
+		<if test="state!=null">,state</if>
+		)
+		values
+		(0
+		<if test="uid!=null">,#{uid}</if>
+		<if test="type!=null">,#{type}</if>
+		<if test="typeId!=null">,#{typeId}</if>
+		,CURRENT_TIMESTAMP 
+		,0
+		)
+	</insert>
+	
+	<update id="edit" parameterType="com.iurc.entity.Collection" >
+		update iurc_collection set
+		<if test="uid!=null">
+			uid = #{uid},
+		</if>
+		<if test="type!=null">
+			type = #{type},
+		</if>
+		<if test="typeId!=null">
+			typeId = #{typeId},
+		</if>
+		<if test="createTime!=null">
+			createTime = #{createTime},
+		</if>
+		<if test="state!=null">
+			state = #{state}
+		</if>
+		where id = ${id}
+	</update>
+	
+	<update id="remove" parameterType="com.iurc.entity.Collection"  >
+		update iurc_collection set state = 1 where id = ${id}
+	</update>
+	
+	
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM iurc_collection WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteMore" parameterType="List" >
+		delete from iurc_collection where id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")"> 
+    		#{item,jdbcType=BIGINT} 
+   		</foreach> 
+	</delete>
+	
+	<select id="queryById" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.Collection">
+		select * from iurc_collection where id=#{id}  
+	</select>
+	
+	<select id="queryByPage" parameterType="Map" 
+	resultType="com.iurc.entity.Collection">
+		select * from iurc_collection  limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="queryAll" resultType="com.iurc.entity.Collection">
+		select * from iurc_collection  
+	</select>
+	
+	<select id="getTotals" resultType="java.lang.Integer">
+		select count(*) from iurc_collection  
+	</select>
+	
+	
+</mapper>

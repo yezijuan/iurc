@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iurc.dao.CooperationDao">
+	
+	<select id="findAll" parameterType="com.iurc.entity.Cooperation" 
+	resultType="com.iurc.entity.Cooperation">
+		select * from iurc_cooperation where 1=1  
+		<if test="id!=null and id!= ''">
+			and id = #{id}
+		</if>
+		<if test="cUnitId!=null and cUnitId!=''">
+			and cUnitId = #{cUnitId}
+		</if>
+		<if test="projectId!=null and projectId!=''">
+			and projectId = #{projectId}
+		</if>
+		<if test="contract!=null and contract!=''">
+			and contract like CONCAT('%',CONCAT(#{contract},'%'))
+		</if>
+	</select>
+	<select id="findAllUnit"  resultType="com.iurc.entity.Cooperation">
+		select * from iurc_cooperation 
+	</select>
+	<select id="find" parameterType="com.iurc.entity.Cooperation" 
+	resultType="com.iurc.entity.Cooperation">
+		select * from iurc_cooperation where 1=1  
+		<if test="projectId!=null and projectId!=''">
+			and projectId = #{projectId}
+		</if>
+		<if test="cUnitId!=null and cUnitId!=''">
+			and cUnitId = #{cUnitId}
+		</if>
+		<if test="id!=null and id!=''">
+			and id = #{id}
+		</if>
+		<if test="state!=null and state!=''">
+			and state = #{state}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="com.iurc.entity.Cooperation"  >
+		insert into iurc_cooperation
+		(id
+		<if test="cUnitId!=null">,cUnitId</if>
+		<if test="projectId!=null">,projectId</if>
+		<if test="contract!=null">,contract</if>
+		<if test="cooperatedTime!=null">,cooperatedTime</if>
+		<if test="state!=null">,state</if>
+		)
+		values
+		(0
+		<if test="cUnitId!=null">,#{cUnitId}</if>
+		<if test="projectId!=null">,#{projectId}</if>
+		<if test="contract!=null">,#{contract}</if>
+		<if test="cooperatedTime!=null">,#{cooperatedTime}</if>
+		,0
+		)
+	</insert>
+	
+	<update id="edit" parameterType="com.iurc.entity.Cooperation" >
+		update iurc_cooperation set
+		<if test="cUnitId!=null">
+			cUnitId = #{cUnitId},
+		</if>
+		<if test="projectId!=null">
+			projectId = #{projectId},
+		</if>
+		<if test="contract!=null">
+			contract = #{contract},
+		</if>
+		<if test="cooperatedTime!=null">
+			cooperatedTime = #{cooperatedTime},
+		</if>
+		<if test="state!=null">
+			state = #{state}
+		</if>
+		where id = ${id}
+	</update>
+	
+	<update id="remove" parameterType="com.iurc.entity.Cooperation"  >
+		update iurc_cooperation set state = 1 where id = ${id}
+	</update>
+	
+	
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM iurc_cooperation WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteMore" parameterType="List" >
+		delete from iurc_cooperation where id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")"> 
+    		#{item,jdbcType=BIGINT} 
+   		</foreach> 
+	</delete>
+	
+	<select id="queryById" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.Cooperation">
+		select * from iurc_cooperation where id=#{id}  
+	</select>
+	
+	
+	<select id="queryByPage" parameterType="Map" 
+	resultType="com.iurc.entity.Cooperation">
+		select * from iurc_cooperation  limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="queryAll" resultType="com.iurc.entity.Cooperation">
+		select * from iurc_cooperation  
+	</select>
+	
+	<select id="getTotals" resultType="java.lang.Integer">
+		select count(*) from iurc_cooperation  
+	</select>
+	
+	<select id="queryByProjectId" parameterType="java.lang.Integer" 
+	resultMap="projectResultMap">
+		select * from iurc_cooperation where projectId=#{id}  
+	</select>
+	<select id="queryBycUnitId" parameterType="java.lang.Integer" 
+	resultMap="projectResultMap">
+		select * from iurc_cooperation where cUnitId=#{id}  
+	</select>
+	<select id="queryCooperation"  resultMap="projectResultMap">
+		select * from iurc_cooperation  
+	</select>
+	
+	<select id="queryByCooperationId" parameterType="java.lang.Integer" 
+	resultMap="projectResultMap">
+		select * from iurc_cooperation u,iurc_unit n where u.cUnitId=n.id and u.id=#{id}  
+	</select>
+	
+	<!-- 映射Cooperation对象的resultMap -->
+	<resultMap type="com.iurc.entity.Cooperation" id="projectResultMap">
+		<id property="id" column="id"/>
+		<result property="projectId" column="projectId"/>
+		<result property="cUnitId" column="cUnitId"/>
+		<result property="cooperatedTime" column="cooperatedTime" javaType="java.sql.Timestamp"/>
+		<result property="state" column="state"/>
+		<!-- 多对一关联映射：association   -->
+		<association property="project" javaType="com.iurc.entity.Project">
+			<id property="id" column="id"/>
+			<result property="cUnitId" column="cUnitId"/>
+			<result property="projectName" column="projectName"/>
+			<result property="projectContent" column="projectContent"/>
+			<result property="projectFoundingTime" column="projectFoundingTime" javaType="java.sql.Timestamp"/>
+			<result property="state" column="state"/>
+		</association>
+		<!-- 多对一关联映射：association   -->
+		<association property="unit" javaType="com.iurc.entity.Unit">
+			<id property="id" column="id"/>
+			<result property="unitName" column="unitName"/>
+			<result property="uid" column="uid"/>
+			<result property="unitType" column="unitType"/>
+			<result property="introduction" column="introduction"/>
+			<result property="industryField" column="industryField"/>
+			<result property="advantage" column="advantage"/>
+			<result property="address" column="address"/>
+			<result property="phone" column="phone"/>
+			<result property="state" column="state"/>
+		</association>
+	</resultMap>
+	
+	
+	<!-- 查询合作合同 -->
+	<select id="searchByCondition" parameterType="map" 
+	resultType="com.iurc.entity.Cooperation">
+		select * from iurc_cooperation where 1=1  
+		<if test="condition1!=null and condition1!='' and condition1=='id'">
+			and id like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		<if test="condition1!=null and condition1!='' and condition1=='cUnitId'">
+			and cUnitId like CONCAT('%',CONCAT(#{condition2},'%'))
+		</if>
+		order by id limit #{start},#{pageSize} 
+	</select>
+	
+	
+	
+</mapper>

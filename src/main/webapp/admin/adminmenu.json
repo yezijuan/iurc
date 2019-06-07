@@ -1,0 +1,81 @@
+[{    
+    "id":1,    
+    "text":"用户管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/user.jsp"
+        }         
+},{    
+    "id":2,    
+    "text":"单位管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/unit.jsp"
+        }         
+},{    
+    "id":3,    
+    "text":"项目管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/project.jsp"
+        }         
+},{    
+    "id":4,    
+    "text":"合作管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/cooperation.jsp"
+        }         
+},{    
+    "id":5,    
+    "text":"新闻管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/news.jsp"
+        }         
+},{    
+    "id":6,    
+    "text":"主题管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/theme.jsp"
+        }         
+},{    
+    "id":7,    
+    "text":"回复管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/reply.jsp"
+        }         
+},{    
+    "id":8,    
+    "text":"关注管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/attention.jsp"
+        }         
+},{    
+    "id":9,    
+    "text":"收藏管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/collection.jsp"
+        }         
+},{    
+    "id":10,    
+    "text":"审核管理",    
+    "iconCls":"icon-large-smartart",
+    "state":"open",
+        "attributes":{    
+            "url":"admin/checked.jsp"
+        }         
+}]

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iurc.dao.NewsDao">
+	
+	<select id="findAll" parameterType="com.iurc.entity.News" 
+	resultType="com.iurc.entity.News">
+		select * from iurc_news where 1=1  
+		<if test="id!=null and id!= ''">
+			and id = #{id}
+		</if>
+		<if test="newsTypeId!=null and newsTypeId!=''">
+			and newsTypeId = #{newsTypeId}
+		</if>
+		<if test="author!=null and author!=''">
+			and author = #{author}
+		</if>
+	</select>
+	<select id="findAllNews"  resultType="com.iurc.entity.News">
+		select * from iurc_news 
+	</select>
+	<select id="find" parameterType="com.iurc.entity.News" 
+	resultType="com.iurc.entity.News">
+		select * from iurc_news where 1=1  
+		<if test="author!=null and author!=''">
+			and author = #{author}
+		</if>
+		<if test="id!=null and id!=''">
+			and id = #{id}
+		</if>
+	</select>
+	<!-- 管理员新闻分页查询 -->
+	<select id="queryByPage" parameterType="Map"  resultType="com.iurc.entity.News">
+		select * from iurc_news limit #{start},#{pageSize}
+	</select>
+	<!-- 新闻首页的新闻分页查询 -->
+	<select id="queryNews" parameterType="Map"  resultType="com.iurc.entity.News">
+		select * from iurc_news where state=0 and checked=1
+		<if test="newsTypeId!=null and newsTypeId!='' and newsTypeId!=0">
+			and newsTypeId = #{newsTypeId} 
+		</if> 
+		order by createTime desc limit #{start},#{pageSize}
+	</select>
+	<!-- 登录用户个人中心已发布的新闻分页查询 -->
+	<select id="queryPage" parameterType="Map"  resultType="com.iurc.entity.News">
+		select * from iurc_news where state=0 and checked=1
+		<if test="newsTypeId!=null and newsTypeId!='' and newsTypeId!=0">
+			and newsTypeId = #{newsTypeId} 
+		</if> 
+		<if test="author!=null and author!=''">
+			and author = #{author} 
+		</if>
+		order by createTime desc limit #{start},#{pageSize}
+	</select>
+	
+	<insert id="add" parameterType="com.iurc.entity.News"  >
+		insert into iurc_news
+		(id
+		<if test="title!=null">,title</if>
+		<if test="content!=null">,content</if>
+		<if test="picture!=null">,picture</if>
+		<if test="reportTime!=null">,reportTime</if>
+		<if test="newsTypeId!=null">,newsTypeId</if>
+		<if test="author!=null">,author</if>
+		<if test="readCounts!=null">,readCounts</if>
+		<if test="praiseCounts!=null">,praiseCounts</if>
+		<if test="collectionCounts!=null">,collectionCounts</if>
+		<if test="checked!=null">,checked</if>
+		<if test="state!=null">,state</if>
+		,createTime
+		)
+		values
+		(0
+		<if test="title!=null">,#{title}</if>
+		<if test="content!=null">,#{content}</if>
+		<if test="picture!=null">,#{picture}</if>
+		<if test="reportTime!=null">,#{reportTime}</if>
+		<if test="newsTypeId!=null">,#{newsTypeId}</if>
+		<if test="author!=null">,#{author}</if>
+		<if test="readCounts!=null">,#{readCounts}</if>
+		<if test="praiseCounts!=null">,#{praiseCounts}</if>
+		<if test="collectionCounts!=null">,#{collectionCounts}</if>
+		<if test="checked!=null">,#{checked}</if>
+		,0
+		,CURRENT_TIMESTAMP 
+		)
+	</insert>
+	
+	<update id="edit" parameterType="com.iurc.entity.News" >
+		update iurc_news set
+		<if test="title!=null">
+			title = #{title},
+		</if>
+		<if test="content!=null">
+			content = #{content},
+		</if>
+		<if test="picture!=null">
+			picture = #{picture},
+		</if>
+		<if test="reportTime!=null">
+			reportTime = #{reportTime},
+		</if>
+		<if test="newsTypeId!=null">
+			newsTypeId = #{newsTypeId},
+		</if>
+		<if test="author!=null">
+			author = #{author},
+		</if>
+		<if test="readCounts!=null">
+			readCounts = #{readCounts},
+		</if>
+		<if test="praiseCounts!=null">
+			praiseCounts = #{praiseCounts},
+		</if>
+		<if test="collectionCounts!=null">
+			collectionCounts = #{collectionCounts},
+		</if>
+		<if test="checked!=null">
+			checked = #{checked},
+		</if>
+		<if test="state!=null">
+			state = #{state},
+		</if>
+		<if test="createTime!=null">
+			createTime = #{createTime}
+		</if>
+		where id = ${id}
+	</update>
+	
+	<update id="remove" parameterType="com.iurc.entity.News"  >
+		update iurc_news set state = 1 where id = ${id}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM iurc_news WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteMore" parameterType="List" >
+		delete from iurc_news where id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")"> 
+    		#{item,jdbcType=BIGINT} 
+   		</foreach> 
+	</delete>
+	
+	<select id="queryById" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.News">
+		select * from iurc_news where id=#{id}  
+	</select>
+	
+	<select id="queryAll" resultType="com.iurc.entity.News">
+		select * from iurc_news  
+	</select>
+	
+	<select id="getTotals" resultType="java.lang.Integer">
+		select count(*) from iurc_news  
+	</select>
+	
+	
+	<select id="myCollection" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.News">
+		select * from iurc_news n, iurc_collection c where c.type=1 and c.typeId=n.id and c.uid=#{id}  
+	</select>
+	
+	<select id="myRelease" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.News">
+		select * from iurc_news where author=#{id}  
+	</select>
+	<update id="checkById" parameterType="java.lang.Integer">
+		update iurc_news set checked = 1 and state = 0 where id = #{id}
+	</update>
+</mapper>

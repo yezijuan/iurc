@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iurc.dao.UnitDao">
+	
+	<select id="findAll" parameterType="com.iurc.entity.Unit" 
+	resultType="com.iurc.entity.Unit">
+		select * from iurc_unit where 1=1  
+		<if test="id!=null and id!= ''">
+			and id = #{id}
+		</if>
+		<if test="unitType!=null and unitType!=''">
+			and unitType = #{unitType}
+		</if>
+		<if test="unitName!=null and unitName!=''">
+			and unitName like CONCAT('%',CONCAT(#{unitName},'%'))
+		</if>
+	</select>
+	<select id="findAllUnit"  resultType="com.iurc.entity.Unit">
+		select * from iurc_unit 
+	</select>
+	<select id="find" parameterType="com.iurc.entity.Unit" 
+	resultType="com.iurc.entity.Unit">
+		select * from iurc_unit where 1=1  
+		<if test="unitName!=null and unitName!=''">
+			and unitName = #{unitName}
+		</if>
+		<if test="unitType!=null and unitType!=''">
+			and unitType = #{unitType}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="com.iurc.entity.Unit"  >
+		insert into iurc_unit
+		(id
+		<if test="unitName!=null">,unitName</if>
+		<if test="unitType!=null">,unitType</if>
+		<if test="introduction!=null">,introduction</if>
+		<if test="address!=null">,address</if>
+		<if test="uid!=null">,uid</if>
+		<if test="phone!=null">,phone</if>
+		<if test="industryField!=null">,industryField</if>
+		<if test="advantage!=null">,advantage</if>
+		<if test="state!=null">,state</if>
+		)
+		values
+		(0
+		<if test="unitName!=null">,#{unitName}</if>
+		<if test="unitType!=null">,#{unitType}</if>
+		<if test="introduction!=null">,#{introduction}</if>
+		<if test="address!=null">,#{address}</if>
+		<if test="uid!=null">,#{uid}</if>
+		<if test="phone!=null">,#{phone}</if>
+		<if test="industryField!=null">,#{industryField}</if>
+		<if test="advantage!=null">,#{advantage}</if>
+		<if test="state!=null">,#{state}</if>
+		)
+	</insert>
+	
+	<update id="edit" parameterType="com.iurc.entity.Unit" >
+		update iurc_unit set
+		<if test="unitName!=null">
+			unitName = #{unitName},
+		</if>
+		<if test="unitType!=null">
+			unitType = #{unitType},
+		</if>
+		<if test="introduction!=null">
+			introduction = #{introduction},
+		</if>
+		<if test="address!=null">
+			address = #{address},
+		</if>
+		<if test="uid!=null">
+			uid = #{uid},
+		</if>
+		<if test="phone!=null">
+			phone = #{phone},
+		</if>
+		<if test="industryField!=null">
+			industryField = #{industryField},
+		</if>
+		<if test="advantage!=null">
+			advantage = #{advantage},
+		</if>
+		<if test="state!=null">
+			state = #{state}
+		</if>
+		where id = ${id}
+	</update>
+	
+	<update id="remove" parameterType="com.iurc.entity.Unit"  >
+		update iurc_unit set state = 1 where id = #{id}
+	</update>
+	
+	
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM iurc_unit WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteMore" parameterType="List" >
+		delete from iurc_unit where id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")"> 
+    		#{item,jdbcType=BIGINT} 
+   		</foreach> 
+	</delete>
+	<!-- 根据代理人id查询单位信息 -->
+	<select id="queryUnitByUserId" parameterType="java.lang.Integer" 
+	resultMap="unitresultMap">
+		select n.* from iurc_user u , iurc_unit n where  u.id = n.uid and u.id=#{id}
+	</select>
+	<!-- 根据id查询单位信息 -->
+	<select id="queryById" parameterType="java.lang.Integer" 
+	resultMap="unitresultMap">
+		select * from iurc_unit where id=#{id}  
+	</select>
+	<!-- 映射Unit对象的resultMap -->
+	<resultMap type="com.iurc.entity.Unit" id="unitresultMap">
+		<id property="id" column="id"/>
+		<result property="unitType" column="unitType"/>
+		<result property="unitName" column="unitName"/>
+		<result property="introduction" column="introduction"/>
+		<result property="address" column="address"/>
+		<result property="phone" column="phone"/>
+		<result property="industryField" column="industryField"/>
+		<result property="advantage" column="advantage"/>
+		<result property="state" column="state"/>
+		<!-- 一对多关联映射：collection fetchType="layz" 表示懒加载 -->
+		<collection property="users" javaType="ArrayList" 
+				column="id" ofType="com.iurc.entity.User"
+				select="com.iurc.dao.UserDao.queryByUnitId" >
+					<id property="id" column="id"/>
+					<result property="uname" column="uname"/>
+					<result property="username" column="username"/>
+					<result property="password" column="password"/>
+					<result property="userType" column="userType"/>
+					<result property="phone" column="phone"/>
+					<result property="address" column="address"/>
+					<result property="sex" column="sex"/>
+					<result property="age" column="age"/>
+					<result property="birthday" column="birthday" javaType="java.util.Date"/>
+					<result property="img" column="img"/>
+					<result property="unitId" column="unitId"/>
+					<result property="createTime" column="createTime" javaType="java.sql.Timestamp"/>
+					<result property="qqEmail" column="qqEmail"/>
+					<result property="weChat" column="weChat"/>
+					<result property="state" column="state"/>
+		</collection>
+	</resultMap>
+	
+	
+	<select id="queryByPage" parameterType="Map" 
+	resultType="com.iurc.entity.Unit">
+		select * from iurc_unit  limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="queryAll" resultType="com.iurc.entity.Unit">
+		select * from iurc_unit  
+	</select>
+	
+	<select id="getTotals" resultType="java.lang.Integer">
+		select count(*) from iurc_unit  
+	</select>
+	
+	<select id="queryUnitByType" parameterType="java.lang.Integer" 
+	resultMap="unitresultMap">
+		select * from iurc_unit where unitType=#{unitType}
+	</select>
+	
+	
+	<!-- 映射Unit对象的resultMap -->
+	<resultMap type="com.iurc.entity.Unit" id="UnitResultMap2">
+		<id property="id" column="id"/>
+		<result property="unitType" column="unitType"/>
+		<result property="unitName" column="unitName"/>
+		<result property="introduction" column="introduction"/>
+		<result property="address" column="address"/>
+		<result property="phone" column="phone"/>
+		<result property="industryField" column="industryField"/>
+		<result property="advantage" column="advantage"/>
+		<result property="state" column="state"/>
+		<!-- 一对多关联映射：collection fetchType="layz" 表示懒加载 -->
+		<collection property="projects" javaType="ArrayList" 
+				column="id" ofType="com.iurc.entity.Project"
+				select="com.iurc.dao.ProjectDao.queryByProjectId" >
+					<id property="id" column="id"/>
+					<result property="uname" column="uname"/>
+					<result property="username" column="username"/>
+					<result property="password" column="password"/>
+					<result property="userType" column="userType"/>
+					<result property="phone" column="phone"/>
+					<result property="address" column="address"/>
+					<result property="sex" column="sex"/>
+					<result property="age" column="age"/>
+					<result property="birthday" column="birthday" javaType="java.util.Date"/>
+					<result property="img" column="img"/>
+					<result property="unitId" column="unitId"/>
+					<result property="createTime" column="createTime" javaType="java.sql.Timestamp"/>
+					<result property="qqEmail" column="qqEmail"/>
+					<result property="weChat" column="weChat"/>
+					<result property="state" column="state"/>
+		</collection>
+		<!-- 一对多关联映射：collection fetchType="layz" 表示懒加载 -->
+		<collection property="cooperations" javaType="ArrayList" 
+				column="id" ofType="com.iurc.entity.Cooperation"
+				select="com.iurc.dao.CooperationDao.queryByCooperationId" >
+					<id property="id" column="id"/>
+					<result property="cUnitId" column="cUnitId"/>
+					<result property="cooperatedTime" column="cooperatedTime" javaType="java.sql.Timestamp" />
+					<result property="contract" column="contract"/>
+					<result property="state" column="state"/>
+		</collection>
+	</resultMap>
+	
+	<update id="checkById" parameterType="java.lang.Integer"  >
+		update iurc_unit set state = 0  where id = #{id}
+	</update>
+	
+	
+	
+</mapper>

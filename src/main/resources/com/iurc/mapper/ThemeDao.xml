@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iurc.dao.ThemeDao">
+	<!-- 映射Theme对象的resultMap -->
+	<resultMap type="com.iurc.entity.Theme" id="themeresultMap">
+		<id property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="deliverTime" column="deliverTime" javaType="java.sql.Timestamp"/>
+		<result property="state" column="state"/>
+		<!-- 多对一关联映射：association   -->
+		<association property="user" javaType="com.iurc.entity.User">
+			<id property="id" column="id"/>
+			<result property="uname" column="uname"/>
+		</association>		
+	</resultMap>
+	<select id="findAll" parameterType="com.iurc.entity.Theme" 
+	resultType="com.iurc.entity.Theme">
+		select * from iurc_theme where 1=1  
+		<if test="id!=null and id!= ''">
+			and id = #{id}
+		</if>
+		<if test="title!=null and title!=''">
+			and title = #{title}
+		</if>
+		<if test="uid!=null and uid!=''">
+			and uid = #{uid}
+		</if>
+	</select>
+	<select id="findAllNews"  resultType="com.iurc.entity.Theme">
+		select * from iurc_theme 
+	</select>
+	<select id="find" parameterType="com.iurc.entity.Theme" 
+	resultType="com.iurc.entity.Theme">
+		select * from iurc_theme where 1=1  
+		<if test="uid!=null and uid!=''">
+			and uid = #{uid}
+		</if>
+		<if test="id!=null and id!=''">
+			and id = #{id}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="com.iurc.entity.Theme"  >
+		insert into iurc_theme
+		(id
+		<if test="title!=null">,title</if>
+		<if test="content!=null">,content</if>
+		,deliverTime
+		<if test="uid!=null">,uid</if>
+		<if test="state!=null">,state</if>
+		)
+		values
+		(0
+		<if test="title!=null">,#{title}</if>
+		<if test="content!=null">,#{content}</if>
+		,CURRENT_TIMESTAMP 
+		<if test="uid!=null">,#{uid}</if>
+		,0
+		)
+	</insert>
+	
+	<update id="edit" parameterType="com.iurc.entity.Theme" >
+		update iurc_theme set
+		<if test="title!=null">
+			title = #{title},
+		</if>
+		<if test="content!=null">
+			content = #{content},
+		</if>
+		<if test="deliverTime!=null">
+			deliverTime = #{deliverTime},
+		</if>
+		<if test="uid!=null">
+			uid = #{uid},
+		</if>
+		<if test="state!=null">
+			state = #{state}
+		</if>
+		where id = ${id}
+	</update>
+	
+	<update id="remove" parameterType="com.iurc.entity.Theme"  >
+		update iurc_theme set state = 1 where id = ${id}
+	</update>
+	
+	
+	<delete id="delete" parameterType="java.lang.Integer" >
+		DELETE FROM iurc_theme WHERE id = #{id}
+	</delete>
+	
+	<delete id="deleteMore" parameterType="List" >
+		delete from iurc_theme where id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")"> 
+    		#{item,jdbcType=BIGINT} 
+   		</foreach> 
+	</delete>
+	
+	<select id="queryById" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.Theme">
+		select * from iurc_theme where id=#{id}  
+	</select>
+	
+	<select id="queryByPage" parameterType="Map" 
+	resultType="com.iurc.entity.Theme">
+		select * from iurc_theme  limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="queryThemeByPage" parameterType="Map" 
+	resultType="com.iurc.entity.Theme">
+		select * from iurc_theme where state=0 order by deliverTime DESC limit #{start},#{pageSize} 
+	</select>
+	
+	<select id="queryAll" resultType="com.iurc.entity.Theme">
+		select * from iurc_theme  
+	</select>
+	
+	<select id="getTotals" resultType="java.lang.Integer">
+		select count(*) from iurc_theme  
+	</select>
+	
+	<select id="queryByUidAndType" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.Theme">
+		select * from iurc_collection c , iurc_theme t where c.type=2 and c.typeId=t.id and  c.uid = #{uid}  
+	</select>
+	
+	<select id="queryByUid" parameterType="java.lang.Integer" 
+	resultType="com.iurc.entity.Theme">
+		select * from iurc_theme where state = 0 and  uid =#{uid}  
+	</select>
+	
+	<!-- 禁用该用户,把禁用审核记录到审核表 -->
+	<update id="disablesById" parameterType="java.lang.Integer"  >
+		update iurc_theme set state = 1 where id = #{id}
+	</update>
+	
+	
+</mapper>
